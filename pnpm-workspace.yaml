@@ -1,0 +1,6 @@
+packages:
+  - 'apps/*'
+  - 'packages/*'
+allowBuilds:
+  # Native resolver binary used by the ESLint toolchain; needs its postinstall.
+  unrs-resolver: true

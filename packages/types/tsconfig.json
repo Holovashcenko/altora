@@ -1,0 +1,4 @@
+{
+  "extends": "@altora/tsconfig/node-library.json",
+  "include": ["src/**/*"]
+}

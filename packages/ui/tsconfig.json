@@ -1,0 +1,4 @@
+{
+  "extends": "@altora/tsconfig/react-library.json",
+  "include": ["src/**/*"]
+}

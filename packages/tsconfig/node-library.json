@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Altora Node Library",
+  "extends": "./base.json",
+  "compilerOptions": {
+    // Node16 resolves to CommonJS output for packages without `"type": "module"`,
+    // which keeps these libraries consumable by both NestJS and Vite.
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "${configDir}/dist",
+    "rootDir": "${configDir}/src"
+  },
+  "include": ["${configDir}/src/**/*"]
+}

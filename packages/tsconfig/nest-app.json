@@ -1,0 +1,19 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Altora NestJS App",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "module": "Node16",
+    "moduleResolution": "Node16",
+    "outDir": "${configDir}/dist",
+    "rootDir": "${configDir}/src",
+
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true,
+
+    // Nest injects dependencies after construction, so definite-assignment
+    // checks fight the framework rather than catching real bugs.
+    "strictPropertyInitialization": false
+  },
+  "include": ["${configDir}/src/**/*"]
+}

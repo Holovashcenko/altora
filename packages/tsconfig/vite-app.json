@@ -1,0 +1,17 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Altora Vite App",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "allowImportingTsExtensions": true,
+    "isolatedModules": true,
+    "verbatimModuleSyntax": true,
+    "noEmit": true,
+    "declaration": false,
+    "declarationMap": false
+  }
+}

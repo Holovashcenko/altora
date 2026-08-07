@@ -1,0 +1,7 @@
+{
+  "extends": "@altora/tsconfig/nest-app.json",
+  "compilerOptions": {
+    "types": ["node", "jest"]
+  },
+  "include": ["src/**/*"]
+}

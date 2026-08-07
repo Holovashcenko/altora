@@ -1,0 +1,7 @@
+{
+  "extends": "@altora/tsconfig/vite-app.json",
+  "compilerOptions": {
+    "types": ["node", "vite/client"]
+  },
+  "include": ["src", "vite.config.ts"]
+}

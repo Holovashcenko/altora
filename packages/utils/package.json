@@ -1,0 +1,31 @@
+{
+  "name": "@altora/utils",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Framework-agnostic helpers shared across Altora",
+  "license": "MIT",
+  "main": "./dist/index.js",
+  "types": "./dist/index.d.ts",
+  "exports": {
+    ".": {
+      "types": "./dist/index.d.ts",
+      "default": "./dist/index.js"
+    }
+  },
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "tsc -p tsconfig.json",
+    "dev": "tsc -p tsconfig.json --watch --preserveWatchOutput",
+    "typecheck": "tsc -p tsconfig.json --noEmit",
+    "lint": "eslint .",
+    "clean": "rm -rf dist .turbo *.tsbuildinfo"
+  },
+  "devDependencies": {
+    "@altora/eslint-config": "workspace:*",
+    "@altora/tsconfig": "workspace:*",
+    "eslint": "^10.8.0",
+    "typescript": "^6.0.3"
+  }
+}

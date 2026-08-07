@@ -1,0 +1,28 @@
+{
+  "name": "altora",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Altora — Restaurant Operating System",
+  "license": "MIT",
+  "packageManager": "pnpm@11.20.0",
+  "engines": {
+    "node": ">=22"
+  },
+  "scripts": {
+    "build": "turbo run build",
+    "dev": "turbo run dev",
+    "lint": "turbo run lint",
+    "lint:fix": "turbo run lint -- --fix",
+    "test": "turbo run test",
+    "typecheck": "turbo run typecheck",
+    "clean": "turbo run clean && rm -rf node_modules",
+    "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,md,yml,yaml}\"",
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,md,yml,yaml}\""
+  },
+  "devDependencies": {
+    "eslint": "^10.8.0",
+    "prettier": "^3.9.6",
+    "turbo": "^2.10.8",
+    "typescript": "^6.0.3"
+  }
+}

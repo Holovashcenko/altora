@@ -1,0 +1,14 @@
+{
+  "$schema": "https://json.schemastore.org/tsconfig",
+  "display": "Altora React Library",
+  "extends": "./base.json",
+  "compilerOptions": {
+    "lib": ["ES2023", "DOM", "DOM.Iterable"],
+    "module": "ESNext",
+    "moduleResolution": "Bundler",
+    "jsx": "react-jsx",
+    "outDir": "${configDir}/dist",
+    "rootDir": "${configDir}/src"
+  },
+  "include": ["${configDir}/src/**/*"]
+}

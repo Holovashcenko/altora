@@ -1,0 +1,14 @@
+{
+  "name": "@altora/tsconfig",
+  "version": "0.0.0",
+  "private": true,
+  "description": "Shared TypeScript configurations for Altora",
+  "license": "MIT",
+  "files": [
+    "base.json",
+    "node-library.json",
+    "react-library.json",
+    "vite-app.json",
+    "nest-app.json"
+  ]
+}

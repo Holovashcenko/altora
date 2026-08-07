@@ -1,0 +1,48 @@
+# Dependencies
+node_modules/
+.pnpm-store/
+
+# Build output
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# Turborepo
+.turbo/
+
+# Environment
+.env
+.env.*
+!.env.example
+
+# Logs
+logs/
+*.log
+npm-debug.log*
+pnpm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+
+# Testing
+coverage/
+.nyc_output/
+
+# Caches
+.eslintcache
+.cache/
+.vite/
+
+# Editors
+.idea/
+.vscode/*
+!.vscode/extensions.json
+!.vscode/settings.json
+*.swp
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Local infrastructure state
+infrastructure/docker/data/
