@@ -7,3 +7,8 @@ Suggested layout as the project grows:
 - `architecture/` — system design and diagrams
 - `decisions/` — architecture decision records (ADRs)
 - `api/` — endpoint documentation
+- `plans/` — implementation plans for roadmap items
+
+## Plans
+
+- [Authentication](plans/authentication.md) — next roadmap step
