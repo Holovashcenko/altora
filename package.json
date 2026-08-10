@@ -17,7 +17,10 @@
     "typecheck": "turbo run typecheck",
     "clean": "turbo run clean && rm -rf node_modules",
     "format": "prettier --write \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,md,yml,yaml}\"",
-    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,md,yml,yaml}\""
+    "format:check": "prettier --check \"**/*.{ts,tsx,js,jsx,mjs,cjs,json,md,yml,yaml}\"",
+    "db:up": "docker compose -f infrastructure/docker/docker-compose.yml up -d",
+    "db:down": "docker compose -f infrastructure/docker/docker-compose.yml down",
+    "db:migrate": "pnpm --filter @altora/api db:migrate"
   },
   "devDependencies": {
     "eslint": "^10.8.0",

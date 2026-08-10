@@ -97,8 +97,12 @@ Requires **Node 22+** and **pnpm 11** (`corepack enable pnpm`).
 
 ```bash
 pnpm install
+pnpm db:up        # start PostgreSQL (required for the API)
+pnpm db:migrate   # apply database migrations (requires apps/api/.env)
 pnpm dev          # runs every app in watch mode
 ```
+
+Copy `apps/api/.env.example` to `apps/api/.env` before running migrations.
 
 | Command          | Description                               |
 | ---------------- | ----------------------------------------- |
@@ -109,6 +113,8 @@ pnpm dev          # runs every app in watch mode
 | `pnpm test`      | Run test suites                           |
 | `pnpm format`    | Format with Prettier                      |
 | `pnpm clean`     | Remove build artifacts and `node_modules` |
+| `pnpm db:up`     | Start local PostgreSQL via Docker         |
+| `pnpm db:migrate`| Apply API database migrations             |
 
 The admin app runs on `http://localhost:5173`, the API on `http://localhost:4000`.
 Requests to `/api` from the admin dev server are proxied to the API.

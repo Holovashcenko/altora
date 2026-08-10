@@ -2,5 +2,7 @@ packages:
   - 'apps/*'
   - 'packages/*'
 allowBuilds:
-  # Native resolver binary used by the ESLint toolchain; needs its postinstall.
+  '@prisma/client': true
+  '@prisma/engines': true
+  prisma: true
   unrs-resolver: true
