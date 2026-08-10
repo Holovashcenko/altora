@@ -13,11 +13,11 @@
     "db:migrate:deploy": "prisma migrate deploy",
     "start": "node dist/main.js",
     "start:debug": "nest start --debug --watch",
-    "typecheck": "tsc -p tsconfig.json --noEmit",
-    "lint": "eslint .",
-    "test": "jest --passWithNoTests",
+    "typecheck": "prisma generate && tsc -p tsconfig.json --noEmit",
+    "lint": "prisma generate && eslint .",
+    "test": "prisma generate && jest --passWithNoTests",
     "test:watch": "jest --watch",
-    "test:cov": "jest --coverage --passWithNoTests",
+    "test:cov": "prisma generate && jest --coverage --passWithNoTests",
     "clean": "rm -rf dist .turbo coverage *.tsbuildinfo"
   },
   "dependencies": {
