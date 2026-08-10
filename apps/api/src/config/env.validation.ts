@@ -1,12 +1,5 @@
 import { plainToInstance, Type } from 'class-transformer';
-import {
-  IsEnum,
-  IsInt,
-  IsOptional,
-  IsString,
-  Min,
-  validateSync,
-} from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Min, validateSync } from 'class-validator';
 
 enum Environment {
   Development = 'development',
@@ -33,9 +26,7 @@ class EnvironmentVariables {
   DATABASE_URL!: string;
 }
 
-export function validateEnv(
-  config: Record<string, unknown>,
-): EnvironmentVariables {
+export function validateEnv(config: Record<string, unknown>): EnvironmentVariables {
   const validatedConfig = plainToInstance(EnvironmentVariables, config, {
     enableImplicitConversion: true,
   });

@@ -3,9 +3,7 @@ import type { AuthResponse, LoginRequest } from '@altora/types';
 const API_BASE = '/api';
 
 /** POST /auth/login — typed client stub for Phase 4 UI. */
-export async function login(
-  credentials: LoginRequest,
-): Promise<AuthResponse> {
+export async function login(credentials: LoginRequest): Promise<AuthResponse> {
   const response = await fetch(`${API_BASE}/auth/login`, {
     method: 'POST',
     headers: { 'Content-Type': 'application/json' },

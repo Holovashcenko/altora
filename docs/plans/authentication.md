@@ -4,13 +4,13 @@ Next roadmap item after **Project initialization** ([README](../../README.md#-ro
 
 ## Current State
 
-| Layer | Status |
-|-------|--------|
-| API | Health endpoint only (`GET /api/health`) |
-| Admin | Static shell, no router or auth UI |
-| Database / ORM | Not wired (env placeholders only) |
-| Docker | Documented, not implemented |
-| `packages/types` | Empty stub |
+| Layer            | Status                                   |
+| ---------------- | ---------------------------------------- |
+| API              | Health endpoint only (`GET /api/health`) |
+| Admin            | Static shell, no router or auth UI       |
+| Database / ORM   | Not wired (env placeholders only)        |
+| Docker           | Documented, not implemented              |
+| `packages/types` | Empty stub                               |
 
 No auth work has started — JWT, Passport, user entities, guards, and login UI are all greenfield.
 
@@ -61,12 +61,12 @@ Define auth shapes once for API + admin:
 
 NestJS module with:
 
-| Endpoint | Purpose |
-|----------|---------|
-| `POST /auth/register` | Create account (owner signup for now) |
-| `POST /auth/login` | Issue JWT (or session cookie) |
-| `GET /auth/me` | Current user |
-| `POST /auth/logout` | Invalidate token/session (optional in v1) |
+| Endpoint              | Purpose                                   |
+| --------------------- | ----------------------------------------- |
+| `POST /auth/register` | Create account (owner signup for now)     |
+| `POST /auth/login`    | Issue JWT (or session cookie)             |
+| `GET /auth/me`        | Current user                              |
+| `POST /auth/logout`   | Invalidate token/session (optional in v1) |
 
 Also:
 
