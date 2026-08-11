@@ -15,9 +15,10 @@
     "start:debug": "nest start --debug --watch",
     "typecheck": "prisma generate && tsc -p tsconfig.json --noEmit",
     "lint": "prisma generate && eslint .",
-    "test": "prisma generate && jest --passWithNoTests",
+    "test": "prisma generate && jest",
     "test:watch": "jest --watch",
-    "test:cov": "prisma generate && jest --coverage --passWithNoTests",
+    "test:e2e": "prisma generate && jest --config test/jest-e2e.json --runInBand",
+    "test:cov": "prisma generate && jest --coverage",
     "clean": "rm -rf dist .turbo coverage *.tsbuildinfo"
   },
   "dependencies": {
@@ -68,7 +69,16 @@
     "rootDir": "src",
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
-      "^.+\\.(t|j)s$": "ts-jest"
+      "^.+\\.(t|j)s$": [
+        "ts-jest",
+        {
+          "diagnostics": {
+            "ignoreCodes": [
+              151002
+            ]
+          }
+        }
+      ]
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"

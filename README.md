@@ -118,21 +118,22 @@ Requests to `/api` from the admin dev server are proxied to the API.
 
 ### Commands
 
-| Command                                    | Description                                      |
-| ------------------------------------------ | ------------------------------------------------ |
-| `pnpm dev`                                 | Run all apps in watch mode                       |
-| `pnpm --filter @altora/api dev`            | Run the API only                                 |
-| `pnpm --filter @altora/admin dev`          | Run the admin app only                           |
-| `pnpm build`                               | Build every package in dependency order          |
-| `pnpm lint`                                | ESLint across the workspace                      |
-| `pnpm typecheck`                           | TypeScript with no emit                          |
-| `pnpm test`                                | Run test suites                                  |
-| `pnpm format`                              | Format with Prettier                             |
-| `pnpm clean`                               | Remove build artifacts and `node_modules`        |
-| `pnpm db:up`                               | Start local PostgreSQL via Docker                |
-| `pnpm db:down`                             | Stop the PostgreSQL container                    |
-| `pnpm db:migrate`                          | Apply API database migrations                    |
-| `pnpm --filter @altora/api db:migrate:dev` | Create a migration after editing `schema.prisma` |
+| Command                                    | Description                                       |
+| ------------------------------------------ | ------------------------------------------------- |
+| `pnpm dev`                                 | Run all apps in watch mode                        |
+| `pnpm --filter @altora/api dev`            | Run the API only                                  |
+| `pnpm --filter @altora/admin dev`          | Run the admin app only                            |
+| `pnpm build`                               | Build every package in dependency order           |
+| `pnpm lint`                                | ESLint across the workspace                       |
+| `pnpm typecheck`                           | TypeScript with no emit                           |
+| `pnpm test`                                | Run unit test suites                              |
+| `pnpm test:e2e`                            | Run e2e tests (needs `pnpm db:up` + `db:migrate`) |
+| `pnpm format`                              | Format with Prettier                              |
+| `pnpm clean`                               | Remove build artifacts and `node_modules`         |
+| `pnpm db:up`                               | Start local PostgreSQL via Docker                 |
+| `pnpm db:down`                             | Stop the PostgreSQL container                     |
+| `pnpm db:migrate`                          | Apply API database migrations                     |
+| `pnpm --filter @altora/api db:migrate:dev` | Create a migration after editing `schema.prisma`  |
 
 ### Troubleshooting
 
@@ -176,7 +177,7 @@ docs/                 Architecture notes and ADRs
 ## 🛣 Roadmap
 
 - [x] Project initialization
-- [ ] Authentication
+- [x] Authentication
 - [ ] Restaurant management
 - [ ] Hall builder
 - [ ] Table management
