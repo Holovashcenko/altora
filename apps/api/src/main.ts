@@ -1,18 +1,17 @@
-import { ValidationPipe } from '@nestjs/common';
+import { ConfigService } from '@nestjs/config';
 import { NestFactory } from '@nestjs/core';
 
 import { AppModule } from './app.module';
+import { configureApp } from './app.setup';
 import { isSwaggerEnabled, setupSwagger } from './swagger';
-
-const DEFAULT_PORT = 4000;
 
 async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
+  const config = app.get(ConfigService);
 
-  app.setGlobalPrefix('api');
-  app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }));
+  configureApp(app);
   app.enableCors({
-    origin: process.env.CORS_ORIGIN ?? 'http://localhost:5173',
+    origin: config.get<string>('CORS_ORIGIN'),
     credentials: true,
   });
 
@@ -20,7 +19,7 @@ async function bootstrap(): Promise<void> {
     setupSwagger(app);
   }
 
-  await app.listen(process.env.PORT ?? DEFAULT_PORT);
+  await app.listen(config.get<number>('PORT')!);
 }
 
 void bootstrap();

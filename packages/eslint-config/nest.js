@@ -14,5 +14,8 @@ export default tseslint.config(...base, {
     // framework boundary; flag it without blocking the build.
     '@typescript-eslint/no-explicit-any': 'warn',
     '@typescript-eslint/explicit-module-boundary-types': 'off',
+    // Injected classes and DTOs look type-only to this rule, but `emitDecoratorMetadata`
+    // needs the runtime import — auto-fixing it silently breaks DI and validation.
+    '@typescript-eslint/consistent-type-imports': 'off',
   },
 });

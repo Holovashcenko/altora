@@ -1,7 +1,10 @@
 {
   "extends": "@altora/tsconfig/nest-app.json",
   "compilerOptions": {
-    "types": ["node", "jest"]
+    "types": ["node", "jest"],
+    // The e2e suite lives outside `src`, so the editor/typecheck project spans
+    // the whole package. `tsconfig.build.json` narrows it back for emit.
+    "rootDir": "."
   },
-  "include": ["src/**/*"]
+  "include": ["src/**/*", "test/**/*"]
 }

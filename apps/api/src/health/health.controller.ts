@@ -3,10 +3,13 @@ import { ApiOkResponse, ApiOperation, ApiTags } from '@nestjs/swagger';
 
 import { HealthResponseDto } from './dto/health-response.dto';
 
+import { Public } from '../auth/decorators/public.decorator';
+
 /** Liveness probe used by Docker, nginx and CI. Not a domain endpoint. */
 @ApiTags('Health')
 @Controller('health')
 export class HealthController {
+  @Public()
   @Get()
   @ApiOperation({
     summary: 'Liveness probe',
