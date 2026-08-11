@@ -24,9 +24,9 @@ export function setupSwagger(app: INestApplication): void {
     .setTitle('Altora API')
     .setDescription('REST API for Altora — the Restaurant Operating System.')
     .setVersion('0.0.0')
-    // Registered ahead of the auth module so protected endpoints only need
-    // `@ApiBearerAuth()` once they land.
+    // Named `bearer` so protected endpoints reference it with `@ApiBearerAuth('bearer')`.
     .addBearerAuth({ type: 'http', scheme: 'bearer', bearerFormat: 'JWT' }, 'bearer')
+    .addTag('Auth', 'Registration, login and the current account')
     .addTag('Health', 'Liveness probes for Docker, nginx and CI')
     .build();
 
