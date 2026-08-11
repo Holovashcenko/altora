@@ -5,4 +5,11 @@
  * so this package must stay free of runtime dependencies — types only.
  */
 
-export {};
+export type {
+  AuthResponse,
+  AuthTokens,
+  AuthUser,
+  LoginRequest,
+  RegisterRequest,
+  UserRole,
+} from './auth';

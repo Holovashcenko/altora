@@ -24,6 +24,12 @@
       "dependsOn": ["^build"],
       "outputs": []
     },
+    "test:e2e": {
+      "dependsOn": ["^build"],
+      "cache": false,
+      "env": ["DATABASE_URL", "JWT_SECRET", "JWT_EXPIRES_IN", "PORT", "CORS_ORIGIN"],
+      "outputs": []
+    },
     "test:cov": {
       "dependsOn": ["^build"],
       "outputs": ["coverage/**"]

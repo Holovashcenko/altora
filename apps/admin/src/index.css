@@ -16,3 +16,83 @@ body {
 .app {
   padding: 2rem;
 }
+
+.app-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 1rem;
+}
+
+.app-header h1 {
+  margin: 0;
+}
+
+.auth-status {
+  padding: 2rem;
+}
+
+.auth-page {
+  display: grid;
+  place-items: center;
+  min-height: 100vh;
+  padding: 2rem;
+}
+
+.auth-card {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+  width: min(100%, 22rem);
+  padding: 2rem;
+  border: 1px solid color-mix(in srgb, currentcolor 20%, transparent);
+  border-radius: 0.75rem;
+}
+
+.auth-card h1 {
+  margin: 0;
+}
+
+.auth-subtitle {
+  margin: 0 0 1rem;
+  opacity: 0.7;
+}
+
+.auth-card label {
+  font-size: 0.875rem;
+  font-weight: 600;
+}
+
+.auth-card input {
+  padding: 0.5rem 0.75rem;
+  font: inherit;
+  color: inherit;
+  background: transparent;
+  border: 1px solid color-mix(in srgb, currentcolor 30%, transparent);
+  border-radius: 0.375rem;
+}
+
+.auth-error {
+  margin: 0;
+  color: #d64545;
+  font-size: 0.875rem;
+}
+
+button {
+  padding: 0.5rem 1rem;
+  font: inherit;
+  border: 1px solid color-mix(in srgb, currentcolor 30%, transparent);
+  border-radius: 0.375rem;
+  background: color-mix(in srgb, currentcolor 10%, transparent);
+  color: inherit;
+  cursor: pointer;
+}
+
+button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.auth-card button {
+  margin-top: 1rem;
+}

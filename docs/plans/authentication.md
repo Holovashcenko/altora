@@ -1,18 +1,27 @@
 # Authentication — Implementation Plan
 
-Next roadmap item after **Project initialization** ([README](../../README.md#-roadmap)).
+**Status: complete** (2026-08-11). Delivered across all five phases below; the next
+roadmap item is **Restaurant management** ([README](../../README.md#-roadmap)).
+
+Reference material for what shipped:
+[ADR 0001](../decisions/0001-authentication.md) for the decisions,
+[API docs](../api/authentication.md) for the endpoints.
 
 ## Current State
 
-| Layer | Status |
-|-------|--------|
-| API | Health endpoint only (`GET /api/health`) |
-| Admin | Static shell, no router or auth UI |
-| Database / ORM | Not wired (env placeholders only) |
-| Docker | Documented, not implemented |
-| `packages/types` | Empty stub |
+| Layer            | Status                                                                        |
+| ---------------- | ----------------------------------------------------------------------------- |
+| API              | `AuthModule` — register, login, me; global `JwtAuthGuard` with `@Public()`    |
+| Admin            | react-router with `/login` and a protected dashboard; auth context + provider |
+| Database / ORM   | Prisma + PostgreSQL; `users` table migrated (`20250810100000_init_users`)     |
+| Docker           | Compose stack for PostgreSQL (`pnpm db:up`)                                   |
+| `packages/types` | Shared auth contracts consumed by both apps                                   |
+| Tests            | 10 unit specs, 14 e2e specs against real PostgreSQL                           |
+| CI               | PostgreSQL service container; migrations, unit, and e2e steps                 |
 
-No auth work has started — JWT, Passport, user entities, guards, and login UI are all greenfield.
+Deliberately **not** built, with reasoning in the ADR: server-side token revocation
+(no logout endpoint), refresh tokens, Redis, `@Roles()` authorization, and any
+tenant scoping — the last three all belong with Restaurant management.
 
 ---
 
@@ -61,12 +70,12 @@ Define auth shapes once for API + admin:
 
 NestJS module with:
 
-| Endpoint | Purpose |
-|----------|---------|
-| `POST /auth/register` | Create account (owner signup for now) |
-| `POST /auth/login` | Issue JWT (or session cookie) |
-| `GET /auth/me` | Current user |
-| `POST /auth/logout` | Invalidate token/session (optional in v1) |
+| Endpoint              | Purpose                                   |
+| --------------------- | ----------------------------------------- |
+| `POST /auth/register` | Create account (owner signup for now)     |
+| `POST /auth/login`    | Issue JWT (or session cookie)             |
+| `GET /auth/me`        | Current user                              |
+| `POST /auth/logout`   | Invalidate token/session (optional in v1) |
 
 Also:
 

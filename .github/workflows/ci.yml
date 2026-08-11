@@ -13,6 +13,26 @@ jobs:
   verify:
     name: Lint, typecheck, build, test
     runs-on: ubuntu-latest
+
+    services:
+      postgres:
+        image: postgres:16-alpine
+        env:
+          POSTGRES_USER: altora
+          POSTGRES_PASSWORD: altora
+          POSTGRES_DB: altora_test
+        ports:
+          - 5432:5432
+        options: >-
+          --health-cmd "pg_isready -U altora -d altora_test"
+          --health-interval 5s
+          --health-timeout 5s
+          --health-retries 10
+
+    env:
+      DATABASE_URL: postgresql://altora:altora@localhost:5432/altora_test
+      JWT_SECRET: ci-only-secret-at-least-32-characters-long
+
     steps:
       - uses: actions/checkout@v4
 
@@ -40,5 +60,11 @@ jobs:
       - name: Build
         run: pnpm build
 
+      - name: Run migrations
+        run: pnpm db:migrate
+
       - name: Test
         run: pnpm test
+
+      - name: Test (e2e)
+        run: pnpm test:e2e
