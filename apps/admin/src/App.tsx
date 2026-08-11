@@ -1,8 +1,19 @@
+import { Navigate, Route, Routes } from 'react-router-dom';
+
+import { DashboardPage } from './routes/dashboard-page';
+import { LoginPage } from './routes/login-page';
+import { ProtectedRoute } from './routes/protected-route';
+
 export function App() {
   return (
-    <main className="app">
-      <h1>Altora</h1>
-      <p>Restaurant OS — admin shell.</p>
-    </main>
+    <Routes>
+      <Route path="/login" element={<LoginPage />} />
+
+      <Route element={<ProtectedRoute />}>
+        <Route path="/" element={<DashboardPage />} />
+      </Route>
+
+      <Route path="*" element={<Navigate to="/" replace />} />
+    </Routes>
   );
 }

@@ -1,20 +1,20 @@
-import type { AuthResponse, LoginRequest } from '@altora/types';
+import type { AuthResponse, AuthUser, LoginRequest, RegisterRequest } from '@altora/types';
 
-const API_BASE = '/api';
+import { apiRequest } from './api-client';
 
-/** POST /auth/login — typed client stub for Phase 4 UI. */
-export async function login(credentials: LoginRequest): Promise<AuthResponse> {
-  const response = await fetch(`${API_BASE}/auth/login`, {
-    method: 'POST',
-    headers: { 'Content-Type': 'application/json' },
-    body: JSON.stringify(credentials),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Login failed (${response.status})`);
-  }
-
-  return response.json() as Promise<AuthResponse>;
+/** POST /auth/login — returns the user plus the access token to store. */
+export function login(credentials: LoginRequest): Promise<AuthResponse> {
+  return apiRequest<AuthResponse>('/auth/login', { method: 'POST', body: credentials });
 }
 
-export type { AuthResponse, AuthUser, LoginRequest } from '@altora/types';
+/** POST /auth/register — open owner signup, same response shape as login. */
+export function register(details: RegisterRequest): Promise<AuthResponse> {
+  return apiRequest<AuthResponse>('/auth/register', { method: 'POST', body: details });
+}
+
+/** GET /auth/me — resolves the stored token to a user, or throws 401 if stale. */
+export function fetchCurrentUser(token: string): Promise<AuthUser> {
+  return apiRequest<AuthUser>('/auth/me', { token });
+}
+
+export type { AuthResponse, AuthUser, LoginRequest, RegisterRequest } from '@altora/types';
