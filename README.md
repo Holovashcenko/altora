@@ -113,6 +113,12 @@ pnpm dev          # runs every app in watch mode
 The admin app runs on `http://localhost:5173`, the API on `http://localhost:4000`.
 Requests to `/api` from the admin dev server are proxied to the API.
 
+### API documentation
+
+Swagger UI is served at [`http://localhost:4000/api/docs`](http://localhost:4000/api/docs),
+with the raw OpenAPI document at `/api/docs.json`. It is enabled everywhere
+except production; set `SWAGGER_ENABLED=true` to expose it there as well.
+
 ---
 
 ## 📂 Project Structure
