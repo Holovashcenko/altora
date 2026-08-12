@@ -6,4 +6,7 @@ allowBuilds:
   '@prisma/engines': true
   bcrypt: true
   prisma: true
+  # Telemetry pulled in by @nestjs/swagger; nothing depends on its postinstall.
+  '@scarf/scarf': false
+  # Native resolver binary used by the ESLint toolchain; needs its postinstall.
   unrs-resolver: true
