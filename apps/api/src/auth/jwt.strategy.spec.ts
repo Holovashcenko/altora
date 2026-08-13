@@ -63,4 +63,3 @@ describe('JwtStrategy', () => {
     expect(user.role).toBe('staff');
   });
 });
-

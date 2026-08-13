@@ -61,18 +61,17 @@ describe('AuthService', () => {
   describe('register', () => {
     it('stores a bcrypt hash rather than the raw password', async () => {
       users.findByEmail.mockResolvedValue(null);
-      users.createWithRestaurant.mockImplementation(
-        (input: { passwordHash: string }) =>
-          Promise.resolve({
-            user: buildUser({ passwordHash: input.passwordHash }),
-            restaurant: {
-              id: 'r_1',
-              name: "Owner's Restaurant",
-              slug: 'owners-restaurant',
-              createdAt: new Date('2026-01-01T00:00:00.000Z'),
-              updatedAt: new Date('2026-01-02T00:00:00.000Z'),
-            },
-          }),
+      users.createWithRestaurant.mockImplementation((input: { passwordHash: string }) =>
+        Promise.resolve({
+          user: buildUser({ passwordHash: input.passwordHash }),
+          restaurant: {
+            id: 'r_1',
+            name: "Owner's Restaurant",
+            slug: 'owners-restaurant',
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+            updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+          },
+        }),
       );
 
       await service.register({ email: 'new@altora.test', password: PASSWORD, name: 'New' });

@@ -9,7 +9,7 @@ This document helps Copilot work effectively in the Altora monorepo.
 - **Frontend:** React 19 + Vite + TypeScript admin dashboard (`apps/admin`)
 - **Backend:** NestJS API with JWT authentication (`apps/api`)
 - **Database:** PostgreSQL with Prisma ORM
-- **Shared code:** 
+- **Shared code:**
   - `packages/types` — TypeScript interfaces shared between API and admin
   - `packages/ui` — React component library
   - `packages/utils` — Framework-agnostic helpers
@@ -28,46 +28,48 @@ This document helps Copilot work effectively in the Altora monorepo.
 
 ### Development
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm dev` | Run all apps in watch mode (admin on :5173, API on :4000) |
-| `pnpm --filter @altora/api dev` | Run API only |
-| `pnpm --filter @altora/admin dev` | Run admin app only |
-| `pnpm --filter @altora/ui dev` | Watch-compile the UI component library |
-| `pnpm typecheck` | TypeScript type-check (no emit) across workspace |
-| `pnpm lint` | ESLint across workspace |
-| `pnpm lint:fix` | ESLint with `--fix` |
-| `pnpm format` | Prettier format |
-| `pnpm format:check` | Prettier check |
+| Command                           | Purpose                                                   |
+| --------------------------------- | --------------------------------------------------------- |
+| `pnpm dev`                        | Run all apps in watch mode (admin on :5173, API on :4000) |
+| `pnpm --filter @altora/api dev`   | Run API only                                              |
+| `pnpm --filter @altora/admin dev` | Run admin app only                                        |
+| `pnpm --filter @altora/ui dev`    | Watch-compile the UI component library                    |
+| `pnpm typecheck`                  | TypeScript type-check (no emit) across workspace          |
+| `pnpm lint`                       | ESLint across workspace                                   |
+| `pnpm lint:fix`                   | ESLint with `--fix`                                       |
+| `pnpm format`                     | Prettier format                                           |
+| `pnpm format:check`               | Prettier check                                            |
 
 ### Building & Testing
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm build` | Build all packages in dependency order |
-| `pnpm test` | Run unit tests (Jest, matches `*.spec.ts`) |
-| `pnpm test:e2e` | Run e2e tests (needs DB: `pnpm db:up` + `pnpm db:migrate`) |
-| `pnpm test:cov` | Unit tests with coverage |
-| `pnpm --filter @altora/api test:watch` | Run API tests in watch mode |
-| `pnpm clean` | Remove build artifacts and node_modules |
+| Command                                | Purpose                                                    |
+| -------------------------------------- | ---------------------------------------------------------- |
+| `pnpm build`                           | Build all packages in dependency order                     |
+| `pnpm test`                            | Run unit tests (Jest, matches `*.spec.ts`)                 |
+| `pnpm test:e2e`                        | Run e2e tests (needs DB: `pnpm db:up` + `pnpm db:migrate`) |
+| `pnpm test:cov`                        | Unit tests with coverage                                   |
+| `pnpm --filter @altora/api test:watch` | Run API tests in watch mode                                |
+| `pnpm clean`                           | Remove build artifacts and node_modules                    |
 
 ### Database
 
-| Command | Purpose |
-|---------|---------|
-| `pnpm db:up` | Start PostgreSQL via Docker (port 5433, not 5432) |
-| `pnpm db:down` | Stop PostgreSQL |
-| `pnpm db:migrate` | Apply pending Prisma migrations |
+| Command                                    | Purpose                                              |
+| ------------------------------------------ | ---------------------------------------------------- |
+| `pnpm db:up`                               | Start PostgreSQL via Docker (port 5433, not 5432)    |
+| `pnpm db:down`                             | Stop PostgreSQL                                      |
+| `pnpm db:migrate`                          | Apply pending Prisma migrations                      |
 | `pnpm --filter @altora/api db:migrate:dev` | Create a new migration after editing `schema.prisma` |
 
 ### Single Test Example
 
 Run one test file in API:
+
 ```bash
 pnpm --filter @altora/api test -- --testPathPattern=auth.service.spec
 ```
 
 Run one test file in e2e:
+
 ```bash
 pnpm test:e2e -- --testPathPattern=auth.e2e-spec
 ```
@@ -160,11 +162,13 @@ Swagger UI served at `http://localhost:4000/api/docs` (enabled everywhere except
 **Database connection errors**
 
 Check that Docker container is healthy:
+
 ```bash
 docker ps | grep altora-postgres
 ```
 
 Verify migrations applied:
+
 ```bash
 pnpm --filter @altora/api exec prisma migrate status
 ```
@@ -172,6 +176,7 @@ pnpm --filter @altora/api exec prisma migrate status
 **Port already in use**
 
 API `:4000`, admin `:5173`. Find processes:
+
 ```bash
 # Windows
 netstat -ano | findstr :4000
@@ -183,11 +188,13 @@ lsof -iTCP:4000 -sTCP:LISTEN -n -P
 **Build or test failures after schema changes**
 
 Regenerate Prisma client:
+
 ```bash
 pnpm --filter @altora/api db:generate
 ```
 
 Then rebuild and test:
+
 ```bash
 pnpm build && pnpm test
 ```

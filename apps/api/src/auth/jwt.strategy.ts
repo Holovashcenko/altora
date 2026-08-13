@@ -49,4 +49,3 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
     return authUser;
   }
 }
-
