@@ -14,7 +14,10 @@ export class RestaurantMemberGuard implements CanActivate {
       throw new ForbiddenException('Authentication required');
     }
 
-    const membership = await this.prisma.restaurantMember.findFirst({ where: { userId: user.id } , include: { restaurant: true }});
+    const membership = await this.prisma.restaurantMember.findFirst({
+      where: { userId: user.id },
+      include: { restaurant: true },
+    });
 
     if (!membership) {
       throw new ForbiddenException('User is not a member of any restaurant');

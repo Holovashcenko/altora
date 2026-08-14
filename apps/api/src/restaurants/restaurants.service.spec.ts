@@ -51,10 +51,7 @@ describe('RestaurantsService', () => {
     };
 
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        RestaurantsService,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [RestaurantsService, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     service = moduleRef.get(RestaurantsService);
@@ -121,9 +118,9 @@ describe('RestaurantsService', () => {
       await expect(
         service.updateRestaurant('nonexistent_r', { name: 'New Name' }),
       ).rejects.toBeInstanceOf(NotFoundException);
-      await expect(
-        service.updateRestaurant('nonexistent_r', { name: 'New Name' }),
-      ).rejects.toThrow('Restaurant not found');
+      await expect(service.updateRestaurant('nonexistent_r', { name: 'New Name' })).rejects.toThrow(
+        'Restaurant not found',
+      );
       expect(prisma.restaurant.update).not.toHaveBeenCalled();
     });
   });
@@ -197,12 +194,12 @@ describe('RestaurantsService', () => {
     it('throws NotFoundException when membership does not exist', async () => {
       prisma.restaurantMember.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.removeMember('r_1', 'nonexistent_usr'),
-      ).rejects.toBeInstanceOf(NotFoundException);
-      await expect(
-        service.removeMember('r_1', 'nonexistent_usr'),
-      ).rejects.toThrow('Membership not found');
+      await expect(service.removeMember('r_1', 'nonexistent_usr')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
+      await expect(service.removeMember('r_1', 'nonexistent_usr')).rejects.toThrow(
+        'Membership not found',
+      );
       expect(prisma.restaurantMember.delete).not.toHaveBeenCalled();
     });
 
@@ -220,18 +217,18 @@ describe('RestaurantsService', () => {
     it('updateRestaurant checks existence before updating', async () => {
       prisma.restaurant.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.updateRestaurant('r_999', { name: 'Hacker' }),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.updateRestaurant('r_999', { name: 'Hacker' })).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
       expect(prisma.restaurant.update).not.toHaveBeenCalled();
     });
 
     it('removeMember rejects when membership does not exist at the specified restaurant', async () => {
       prisma.restaurantMember.findUnique.mockResolvedValue(null);
 
-      await expect(
-        service.removeMember('r_1', 'usr_999'),
-      ).rejects.toBeInstanceOf(NotFoundException);
+      await expect(service.removeMember('r_1', 'usr_999')).rejects.toBeInstanceOf(
+        NotFoundException,
+      );
       expect(prisma.restaurantMember.delete).not.toHaveBeenCalled();
     });
 

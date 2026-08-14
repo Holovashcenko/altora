@@ -37,10 +37,7 @@ describe('RestaurantMemberGuard', () => {
     };
 
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        RestaurantMemberGuard,
-        { provide: PrismaService, useValue: prisma },
-      ],
+      providers: [RestaurantMemberGuard, { provide: PrismaService, useValue: prisma }],
     }).compile();
 
     guard = moduleRef.get(RestaurantMemberGuard);
@@ -106,9 +103,7 @@ describe('RestaurantMemberGuard', () => {
     it('rejects access when user has no restaurant membership', async () => {
       prisma.restaurantMember.findFirst.mockResolvedValue(null);
 
-      await expect(guard.canActivate(mockContext)).rejects.toBeInstanceOf(
-        ForbiddenException,
-      );
+      await expect(guard.canActivate(mockContext)).rejects.toBeInstanceOf(ForbiddenException);
       await expect(guard.canActivate(mockContext)).rejects.toThrow(
         'User is not a member of any restaurant',
       );
@@ -120,12 +115,8 @@ describe('RestaurantMemberGuard', () => {
       const requestWithoutUser = (mockContext.switchToHttp().getRequest as jest.Mock)();
       requestWithoutUser.user = undefined;
 
-      await expect(guard.canActivate(mockContext)).rejects.toBeInstanceOf(
-        ForbiddenException,
-      );
-      await expect(guard.canActivate(mockContext)).rejects.toThrow(
-        'Authentication required',
-      );
+      await expect(guard.canActivate(mockContext)).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(guard.canActivate(mockContext)).rejects.toThrow('Authentication required');
       expect(prisma.restaurantMember.findFirst).not.toHaveBeenCalled();
     });
 
@@ -133,12 +124,8 @@ describe('RestaurantMemberGuard', () => {
       const requestWithInvalidUser = (mockContext.switchToHttp().getRequest as jest.Mock)();
       requestWithInvalidUser.user = { email: 'owner@altora.test', role: 'owner' };
 
-      await expect(guard.canActivate(mockContext)).rejects.toBeInstanceOf(
-        ForbiddenException,
-      );
-      await expect(guard.canActivate(mockContext)).rejects.toThrow(
-        'Authentication required',
-      );
+      await expect(guard.canActivate(mockContext)).rejects.toBeInstanceOf(ForbiddenException);
+      await expect(guard.canActivate(mockContext)).rejects.toThrow('Authentication required');
       expect(prisma.restaurantMember.findFirst).not.toHaveBeenCalled();
     });
   });

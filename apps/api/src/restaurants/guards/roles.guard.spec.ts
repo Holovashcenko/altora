@@ -24,10 +24,7 @@ describe('RolesGuard', () => {
     };
 
     const moduleRef = await Test.createTestingModule({
-      providers: [
-        RolesGuard,
-        { provide: Reflector, useValue: reflector },
-      ],
+      providers: [RolesGuard, { provide: Reflector, useValue: reflector }],
     }).compile();
 
     guard = moduleRef.get(RolesGuard);
@@ -78,9 +75,7 @@ describe('RolesGuard', () => {
       reflector.getAllAndOverride.mockReturnValue(['owner']);
 
       expect(() => guard.canActivate(mockContext)).toThrow(ForbiddenException);
-      expect(() => guard.canActivate(mockContext)).toThrow(
-        'Insufficient role for this endpoint',
-      );
+      expect(() => guard.canActivate(mockContext)).toThrow('Insufficient role for this endpoint');
     });
 
     it('rejects manager from owner-only endpoints', () => {
@@ -89,9 +84,7 @@ describe('RolesGuard', () => {
       reflector.getAllAndOverride.mockReturnValue(['owner']);
 
       expect(() => guard.canActivate(mockContext)).toThrow(ForbiddenException);
-      expect(() => guard.canActivate(mockContext)).toThrow(
-        'Insufficient role for this endpoint',
-      );
+      expect(() => guard.canActivate(mockContext)).toThrow('Insufficient role for this endpoint');
     });
 
     it('rejects staff from manager-or-owner endpoints', () => {
@@ -100,9 +93,7 @@ describe('RolesGuard', () => {
       reflector.getAllAndOverride.mockReturnValue(['owner', 'manager']);
 
       expect(() => guard.canActivate(mockContext)).toThrow(ForbiddenException);
-      expect(() => guard.canActivate(mockContext)).toThrow(
-        'Insufficient role for this endpoint',
-      );
+      expect(() => guard.canActivate(mockContext)).toThrow('Insufficient role for this endpoint');
     });
   });
 
@@ -131,9 +122,7 @@ describe('RolesGuard', () => {
       reflector.getAllAndOverride.mockReturnValue(['owner']);
 
       expect(() => guard.canActivate(mockContext)).toThrow(ForbiddenException);
-      expect(() => guard.canActivate(mockContext)).toThrow(
-        'Missing restaurant membership',
-      );
+      expect(() => guard.canActivate(mockContext)).toThrow('Missing restaurant membership');
     });
 
     it('allows access when no membership and no role requirements', () => {
