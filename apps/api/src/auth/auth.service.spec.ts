@@ -1,9 +1,10 @@
 import { ConflictException, UnauthorizedException } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { Test } from '@nestjs/testing';
-import type { User } from '@prisma/client';
+import type { Restaurant, RestaurantMember, User } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
+import { PrismaService } from '../prisma/prisma.service';
 import { UsersService } from '../users/users.service';
 import { AuthService } from './auth.service';
 
@@ -18,31 +19,62 @@ function buildUser(overrides: Partial<User> = {}): User {
     email: 'owner@altora.test',
     passwordHash,
     name: 'Owner',
-    role: 'owner',
     createdAt: new Date('2026-01-01T00:00:00.000Z'),
     updatedAt: new Date('2026-01-02T00:00:00.000Z'),
     ...overrides,
   } as User;
 }
 
+const RESTAURANT: Restaurant = {
+  id: 'r_1',
+  name: "Owner's Restaurant",
+  slug: 'owner-restaurant',
+  timezone: 'UTC',
+  currency: 'USD',
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+};
+
+const MEMBERSHIP: RestaurantMember & { restaurant: Restaurant } = {
+  id: 'm_1',
+  userId: 'usr_1',
+  restaurantId: 'r_1',
+  role: 'owner',
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  restaurant: RESTAURANT,
+};
+
 describe('AuthService', () => {
   let service: AuthService;
-  let users: { findByEmail: jest.Mock; findById: jest.Mock; create: jest.Mock };
+  let users: {
+    findByEmail: jest.Mock;
+    findById: jest.Mock;
+    create: jest.Mock;
+    createWithRestaurant: jest.Mock;
+  };
   let jwt: { sign: jest.Mock };
+  let prisma: { restaurantMember: { findFirst: jest.Mock } };
 
   beforeAll(async () => {
     passwordHash = await hash(PASSWORD, 12);
   });
 
   beforeEach(async () => {
-    users = { findByEmail: jest.fn(), findById: jest.fn(), create: jest.fn() };
+    users = {
+      findByEmail: jest.fn(),
+      findById: jest.fn(),
+      create: jest.fn(),
+      createWithRestaurant: jest.fn(),
+    };
     jwt = { sign: jest.fn().mockReturnValue('signed.jwt.token') };
+    prisma = { restaurantMember: { findFirst: jest.fn() } };
 
     const moduleRef = await Test.createTestingModule({
       providers: [
         AuthService,
         { provide: UsersService, useValue: users },
         { provide: JwtService, useValue: jwt },
+        { provide: PrismaService, useValue: prisma },
       ],
     }).compile();
 
@@ -52,29 +84,57 @@ describe('AuthService', () => {
   describe('register', () => {
     it('stores a bcrypt hash rather than the raw password', async () => {
       users.findByEmail.mockResolvedValue(null);
-      users.create.mockImplementation((input: { passwordHash: string }) =>
-        Promise.resolve(buildUser({ passwordHash: input.passwordHash })),
+      users.createWithRestaurant.mockImplementation((input: { passwordHash: string }) =>
+        Promise.resolve({
+          user: buildUser({ passwordHash: input.passwordHash }),
+          restaurant: {
+            id: 'r_1',
+            name: "Owner's Restaurant",
+            slug: 'owners-restaurant',
+            createdAt: new Date('2026-01-01T00:00:00.000Z'),
+            updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+          },
+        }),
       );
 
       await service.register({ email: 'new@altora.test', password: PASSWORD, name: 'New' });
 
-      const created = users.create.mock.calls[0][0];
-      expect(created.passwordHash).not.toBe(PASSWORD);
-      await expect(compare(PASSWORD, created.passwordHash)).resolves.toBe(true);
+      const [createInput] = users.createWithRestaurant.mock.calls[0];
+      expect(createInput.passwordHash).not.toBe(PASSWORD);
+      await expect(compare(PASSWORD, createInput.passwordHash)).resolves.toBe(true);
     });
 
     it('assigns the owner role to v1 signups', async () => {
       users.findByEmail.mockResolvedValue(null);
-      users.create.mockResolvedValue(buildUser());
+      users.createWithRestaurant.mockResolvedValue({
+        user: buildUser(),
+        restaurant: {
+          id: 'r_1',
+          name: "Owner's Restaurant",
+          slug: 'owners-restaurant',
+          createdAt: new Date('2026-01-01T00:00:00.000Z'),
+          updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+        },
+      });
 
       await service.register({ email: 'new@altora.test', password: PASSWORD, name: 'New' });
 
-      expect(users.create).toHaveBeenCalledWith(expect.objectContaining({ role: 'owner' }));
+      expect(users.createWithRestaurant).toHaveBeenCalled();
     });
 
     it('returns a signed token and a user with no password hash', async () => {
       users.findByEmail.mockResolvedValue(null);
-      users.create.mockResolvedValue(buildUser());
+
+      users.createWithRestaurant.mockResolvedValue({
+        user: buildUser(),
+        restaurant: {
+          id: 'r_1',
+          name: "Owner's Restaurant",
+          slug: 'owners-restaurant',
+          createdAt: new Date('2026-01-01T00:00:00.000Z'),
+          updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+        },
+      });
 
       const result = await service.register({
         email: 'owner@altora.test',
@@ -88,6 +148,15 @@ describe('AuthService', () => {
         email: 'owner@altora.test',
         name: 'Owner',
         role: 'owner',
+        restaurant: {
+          id: 'r_1',
+          name: "Owner's Restaurant",
+          slug: 'owners-restaurant',
+          timezone: undefined,
+          currency: undefined,
+          createdAt: '2026-01-01T00:00:00.000Z',
+          updatedAt: '2026-01-02T00:00:00.000Z',
+        },
         createdAt: '2026-01-01T00:00:00.000Z',
         updatedAt: '2026-01-02T00:00:00.000Z',
       });
@@ -104,20 +173,66 @@ describe('AuthService', () => {
       await expect(
         service.register({ email: 'owner@altora.test', password: PASSWORD, name: 'Owner' }),
       ).rejects.toBeInstanceOf(ConflictException);
-      expect(users.create).not.toHaveBeenCalled();
+      expect(users.createWithRestaurant).not.toHaveBeenCalled();
     });
   });
 
-  describe('login', () => {
-    it('issues a token for valid credentials', async () => {
+  describe('login with restaurant membership', () => {
+    it('issues a token with restaurant and role for valid credentials', async () => {
       users.findByEmail.mockResolvedValue(buildUser());
+      prisma.restaurantMember.findFirst.mockResolvedValue(MEMBERSHIP);
 
       const result = await service.login({ email: 'owner@altora.test', password: PASSWORD });
 
       expect(result.tokens.accessToken).toBe('signed.jwt.token');
       expect(result.user.id).toBe('usr_1');
+      expect(result.user.role).toBe('owner');
+      expect(result.user.restaurant).toEqual({
+        id: 'r_1',
+        name: "Owner's Restaurant",
+        slug: 'owner-restaurant',
+        timezone: 'UTC',
+        currency: 'USD',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-02T00:00:00.000Z',
+      });
     });
 
+    it('queries membership with restaurant included', async () => {
+      users.findByEmail.mockResolvedValue(buildUser());
+      prisma.restaurantMember.findFirst.mockResolvedValue(MEMBERSHIP);
+
+      await service.login({ email: 'owner@altora.test', password: PASSWORD });
+
+      expect(prisma.restaurantMember.findFirst).toHaveBeenCalledWith({
+        where: { userId: 'usr_1' },
+        include: { restaurant: true },
+      });
+    });
+
+    it('returns user without restaurant if no membership found', async () => {
+      users.findByEmail.mockResolvedValue(buildUser());
+      prisma.restaurantMember.findFirst.mockResolvedValue(null);
+
+      const result = await service.login({ email: 'owner@altora.test', password: PASSWORD });
+
+      expect(result.user.id).toBe('usr_1');
+      expect(result.user.role).toBeUndefined();
+      expect(result.user.restaurant).toBeUndefined();
+    });
+
+    it('allows manager and staff roles from membership', async () => {
+      users.findByEmail.mockResolvedValue(buildUser());
+      const managerMembership = { ...MEMBERSHIP, role: 'manager' as const };
+      prisma.restaurantMember.findFirst.mockResolvedValue(managerMembership);
+
+      const result = await service.login({ email: 'owner@altora.test', password: PASSWORD });
+
+      expect(result.user.role).toBe('manager');
+    });
+  });
+
+  describe('login credentials', () => {
     it('rejects a wrong password', async () => {
       users.findByEmail.mockResolvedValue(buildUser());
 

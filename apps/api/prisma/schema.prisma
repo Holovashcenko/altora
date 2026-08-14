@@ -18,9 +18,37 @@ model User {
   email        String   @unique
   passwordHash String   @map("password_hash")
   name         String
-  role         UserRole @default(staff)
   createdAt    DateTime @default(now()) @map("created_at")
   updatedAt    DateTime @updatedAt @map("updated_at")
 
+  restaurantMembers RestaurantMember[]
+
   @@map("users")
+}
+
+model Restaurant {
+  id         String   @id @default(cuid())
+  name       String
+  slug       String   @unique
+  timezone   String   @default("UTC")
+  currency   String   @default("USD")
+  createdAt  DateTime @default(now()) @map("created_at")
+  updatedAt  DateTime @updatedAt @map("updated_at")
+
+  members    RestaurantMember[]
+
+  @@map("restaurants")
+}
+
+model RestaurantMember {
+  id           String   @id @default(cuid())
+  user         User     @relation(fields: [userId], references: [id])
+  userId       String   @map("user_id")
+  restaurant   Restaurant @relation(fields: [restaurantId], references: [id])
+  restaurantId String   @map("restaurant_id")
+  role         UserRole
+  createdAt    DateTime @default(now()) @map("created_at")
+
+  @@unique([userId, restaurantId])
+  @@map("restaurant_members")
 }

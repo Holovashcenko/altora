@@ -1,6 +1,6 @@
 import type { RegisterRequest } from '@altora/types';
 import { ApiProperty } from '@nestjs/swagger';
-import { IsEmail, IsString, MaxLength, MinLength } from 'class-validator';
+import { IsEmail, IsString, MaxLength, MinLength, IsOptional } from 'class-validator';
 
 export class RegisterDto implements RegisterRequest {
   @ApiProperty({ format: 'email', example: 'owner@altora.test' })
@@ -24,4 +24,11 @@ export class RegisterDto implements RegisterRequest {
   @MinLength(1)
   @MaxLength(100)
   name!: string;
+
+  @ApiProperty({ required: false, minLength: 1, maxLength: 100, example: "Alex's Pizza" })
+  @IsOptional()
+  @IsString()
+  @MinLength(1)
+  @MaxLength(100)
+  restaurantName?: string;
 }

@@ -20,5 +20,6 @@ Layout:
 
 ## Plans
 
-- [Authentication](plans/authentication.md) — complete; **Restaurant management** is
-  the next roadmap step
+- [Authentication](plans/authentication.md) — complete
+- [Restaurant management](plans/restaurant-management.md) — next roadmap step; tenancy,
+  membership, settings, invites

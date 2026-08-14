@@ -4,5 +4,5 @@ import type { UserRole } from '@altora/types';
 export interface JwtPayload {
   sub: string;
   email: string;
-  role: UserRole;
+  role?: UserRole;
 }

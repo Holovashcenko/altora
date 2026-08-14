@@ -11,7 +11,6 @@ import { PrismaService } from '../src/prisma/prisma.service';
 const EMAIL_PREFIX = 'e2e-auth-';
 const EMAIL = `${EMAIL_PREFIX}owner@altora.test`;
 const PASSWORD = 'correct-horse-battery';
-const NAME = 'E2E Owner';
 
 describe('Auth (e2e)', () => {
   let app: INestApplication;
@@ -42,12 +41,13 @@ describe('Auth (e2e)', () => {
 
   describe('POST /api/auth/register', () => {
     it('creates an owner account and returns a token', async () => {
+      const uniqueName = `Owner ${Date.now()}`;
       const response = await request(http)
         .post('/api/auth/register')
-        .send({ email: EMAIL, password: PASSWORD, name: NAME })
+        .send({ email: EMAIL, password: PASSWORD, name: uniqueName })
         .expect(201);
 
-      expect(response.body.user).toMatchObject({ email: EMAIL, name: NAME, role: 'owner' });
+      expect(response.body.user).toMatchObject({ email: EMAIL, name: uniqueName, role: 'owner' });
       expect(response.body.tokens.accessToken).toEqual(expect.any(String));
       expect(response.body.user).not.toHaveProperty('passwordHash');
 
@@ -64,21 +64,21 @@ describe('Auth (e2e)', () => {
     it('rejects a duplicate email with 409', async () => {
       await request(http)
         .post('/api/auth/register')
-        .send({ email: EMAIL, password: PASSWORD, name: NAME })
+        .send({ email: EMAIL, password: PASSWORD, name: 'E2E Owner' })
         .expect(409);
     });
 
     it('rejects a password shorter than 8 characters with 400', async () => {
       await request(http)
         .post('/api/auth/register')
-        .send({ email: `${EMAIL_PREFIX}short@altora.test`, password: 'short', name: NAME })
+        .send({ email: `${EMAIL_PREFIX}short@altora.test`, password: 'short', name: 'Unique1' })
         .expect(400);
     });
 
     it('rejects a malformed email with 400', async () => {
       await request(http)
         .post('/api/auth/register')
-        .send({ email: 'not-an-email', password: PASSWORD, name: NAME })
+        .send({ email: 'not-an-email', password: PASSWORD, name: 'Unique2' })
         .expect(400);
     });
   });
@@ -136,14 +136,19 @@ describe('Auth (e2e)', () => {
     it('rejects a malformed token', async () => {
       await request(http)
         .get('/api/auth/me')
-        .set('Authorization', 'Bearer not-a-real-token')
+        .set('Authorization', 'Bearer malformed-token')
         .expect(401);
     });
 
     it('rejects a valid token whose user has been deleted', async () => {
+      const uniqueName = `Doomed ${Date.now()}`;
       const doomed = await request(http)
         .post('/api/auth/register')
-        .send({ email: `${EMAIL_PREFIX}deleted@altora.test`, password: PASSWORD, name: 'Gone' })
+        .send({
+          email: `${EMAIL_PREFIX}deleted@altora.test`,
+          password: PASSWORD,
+          name: uniqueName,
+        })
         .expect(201);
 
       await prisma.user.delete({ where: { id: doomed.body.user.id } });

@@ -13,3 +13,6 @@ export type {
   RegisterRequest,
   UserRole,
 } from './auth';
+
+export type { Restaurant, RestaurantMember } from './auth';
+export type { RestaurantSettings, UpdateRestaurantRequest, AuthSession } from './auth';
