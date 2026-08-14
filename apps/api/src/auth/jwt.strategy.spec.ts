@@ -1,6 +1,6 @@
 import { UnauthorizedException } from '@nestjs/common';
 import type { ConfigService } from '@nestjs/config';
-import type { User } from '@prisma/client';
+import type { Restaurant, RestaurantMember, User } from '@prisma/client';
 
 import type { PrismaService } from '../prisma/prisma.service';
 import type { UsersService } from '../users/users.service';
@@ -16,6 +16,25 @@ const USER = {
   createdAt: new Date('2026-01-01T00:00:00.000Z'),
   updatedAt: new Date('2026-01-02T00:00:00.000Z'),
 } as User;
+
+const RESTAURANT: Restaurant = {
+  id: 'r_1',
+  name: "Owner's Restaurant",
+  slug: 'owner-restaurant',
+  timezone: 'UTC',
+  currency: 'USD',
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  updatedAt: new Date('2026-01-02T00:00:00.000Z'),
+};
+
+const MEMBERSHIP: RestaurantMember & { restaurant: Restaurant } = {
+  id: 'm_1',
+  userId: 'usr_1',
+  restaurantId: 'r_1',
+  role: 'owner',
+  createdAt: new Date('2026-01-01T00:00:00.000Z'),
+  restaurant: RESTAURANT,
+};
 
 describe('JwtStrategy', () => {
   let findById: jest.Mock;
@@ -33,33 +52,116 @@ describe('JwtStrategy', () => {
     strategy = new JwtStrategy(config as unknown as ConfigService, users, prisma);
   });
 
-  it('resolves the current user from the token subject', async () => {
-    findById.mockResolvedValue(USER);
-    findFirst.mockResolvedValue({ role: 'owner' });
+  describe('authenticated member with membership', () => {
+    it('resolves the current user with restaurant and role from membership', async () => {
+      findById.mockResolvedValue(USER);
+      findFirst.mockResolvedValue(MEMBERSHIP);
 
-    await expect(strategy.validate(PAYLOAD)).resolves.toEqual({
-      id: 'usr_1',
-      email: 'owner@altora.test',
-      name: 'Owner',
-      role: 'owner',
-      createdAt: '2026-01-01T00:00:00.000Z',
-      updatedAt: '2026-01-02T00:00:00.000Z',
+      const result = await strategy.validate(PAYLOAD);
+
+      expect(result.id).toBe('usr_1');
+      expect(result.email).toBe('owner@altora.test');
+      expect(result.name).toBe('Owner');
+      expect(result.role).toBe('owner');
+      expect(result.restaurant).toEqual({
+        id: 'r_1',
+        name: "Owner's Restaurant",
+        slug: 'owner-restaurant',
+        timezone: 'UTC',
+        currency: 'USD',
+        createdAt: '2026-01-01T00:00:00.000Z',
+        updatedAt: '2026-01-02T00:00:00.000Z',
+      });
     });
-    expect(findById).toHaveBeenCalledWith('usr_1');
+
+    it('queries membership with restaurant included', async () => {
+      findById.mockResolvedValue(USER);
+      findFirst.mockResolvedValue(MEMBERSHIP);
+
+      await strategy.validate(PAYLOAD);
+
+      expect(findFirst).toHaveBeenCalledWith({
+        where: { userId: 'usr_1' },
+        include: { restaurant: true },
+      });
+    });
+
+    it('includes optional timezone and currency if present', async () => {
+      findById.mockResolvedValue(USER);
+      findFirst.mockResolvedValue({
+        ...MEMBERSHIP,
+        restaurant: {
+          ...RESTAURANT,
+          timezone: 'America/New_York',
+          currency: 'EUR',
+        },
+      });
+
+      const result = await strategy.validate(PAYLOAD);
+
+      expect(result.restaurant?.timezone).toBe('America/New_York');
+      expect(result.restaurant?.currency).toBe('EUR');
+    });
+
+    it('includes restaurant even if user token claims a different role', async () => {
+      findById.mockResolvedValue(USER);
+      const managerMembership = { ...MEMBERSHIP, role: 'manager' as const };
+      findFirst.mockResolvedValue(managerMembership);
+
+      const result = await strategy.validate({ ...PAYLOAD, role: 'owner' });
+
+      expect(result.role).toBe('manager');
+      expect(result.restaurant).toBeDefined();
+    });
   });
 
-  it('rejects a token whose user no longer exists', async () => {
-    findById.mockResolvedValue(null);
+  describe('user without membership', () => {
+    it('rejects with UnauthorizedException when user has no restaurant membership', async () => {
+      findById.mockResolvedValue(USER);
+      findFirst.mockResolvedValue(null);
 
-    await expect(strategy.validate(PAYLOAD)).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(strategy.validate(PAYLOAD)).rejects.toBeInstanceOf(UnauthorizedException);
+      await expect(strategy.validate(PAYLOAD)).rejects.toThrow(
+        'User does not have an active restaurant membership',
+      );
+    });
   });
 
-  it('reads the role from the database membership rather than trusting the token', async () => {
-    findById.mockResolvedValue(USER);
-    findFirst.mockResolvedValue({ role: 'staff' });
+  describe('missing user', () => {
+    it('rejects a token whose user no longer exists', async () => {
+      findById.mockResolvedValue(null);
 
-    const user = await strategy.validate({ ...PAYLOAD, role: 'owner' });
+      await expect(strategy.validate(PAYLOAD)).rejects.toBeInstanceOf(UnauthorizedException);
+      expect(findFirst).not.toHaveBeenCalled();
+    });
+  });
 
-    expect(user.role).toBe('staff');
+  describe('role resolution from membership', () => {
+    it('reads the role from the database membership rather than trusting the token', async () => {
+      findById.mockResolvedValue(USER);
+      findFirst.mockResolvedValue({ ...MEMBERSHIP, role: 'staff' as const });
+
+      const user = await strategy.validate({ ...PAYLOAD, role: 'owner' });
+
+      expect(user.role).toBe('staff');
+    });
+
+    it('allows manager role from membership', async () => {
+      findById.mockResolvedValue(USER);
+      findFirst.mockResolvedValue({ ...MEMBERSHIP, role: 'manager' as const });
+
+      const user = await strategy.validate(PAYLOAD);
+
+      expect(user.role).toBe('manager');
+    });
+
+    it('allows staff role from membership', async () => {
+      findById.mockResolvedValue(USER);
+      findFirst.mockResolvedValue({ ...MEMBERSHIP, role: 'staff' as const });
+
+      const user = await strategy.validate(PAYLOAD);
+
+      expect(user.role).toBe('staff');
+    });
   });
 });

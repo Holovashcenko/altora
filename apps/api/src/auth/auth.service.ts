@@ -4,6 +4,7 @@ import { JwtService } from '@nestjs/jwt';
 import type { User } from '@prisma/client';
 import { compare, hash } from 'bcrypt';
 
+import { PrismaService } from '../prisma/prisma.service';
 import { toAuthUser } from '../users/user.mapper';
 import { UsersService } from '../users/users.service';
 import type { LoginDto } from './dto/login.dto';
@@ -23,6 +24,7 @@ export class AuthService {
   constructor(
     private readonly users: UsersService,
     private readonly jwt: JwtService,
+    private readonly prisma: PrismaService,
   ) {}
 
   /**
@@ -62,8 +64,28 @@ export class AuthService {
       throw new UnauthorizedException('Invalid credentials');
     }
 
+    // Fetch the user's restaurant membership with restaurant details
+    const membership = await this.prisma.restaurantMember.findFirst({
+      where: { userId: user.id },
+      include: { restaurant: true },
+    });
+
     const authUser = toAuthUser(user);
     const payload: JwtPayload = { sub: user.id, email: user.email };
+
+    // Attach restaurant and role if membership exists
+    if (membership) {
+      authUser.role = membership.role;
+      authUser.restaurant = {
+        id: membership.restaurant.id,
+        name: membership.restaurant.name,
+        slug: membership.restaurant.slug,
+        timezone: membership.restaurant.timezone ?? undefined,
+        currency: membership.restaurant.currency ?? undefined,
+        createdAt: membership.restaurant.createdAt.toISOString(),
+        updatedAt: membership.restaurant.updatedAt.toISOString(),
+      };
+    }
 
     return {
       user: authUser,

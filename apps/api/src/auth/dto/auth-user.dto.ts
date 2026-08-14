@@ -1,5 +1,5 @@
-import type { AuthUser, UserRole } from '@altora/types';
-import { ApiProperty } from '@nestjs/swagger';
+import type { AuthUser, UserRole, Restaurant } from '@altora/types';
+import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 
 /** Documents the `AuthUser` contract from `@altora/types`; never carries the password hash. */
 export class AuthUserDto implements AuthUser {
@@ -16,12 +16,26 @@ export class AuthUserDto implements AuthUser {
   @ApiProperty({ example: 'Alex Rivera' })
   name!: string;
 
-  @ApiProperty({
+  @ApiPropertyOptional({
     enum: ['owner', 'manager', 'staff'],
     example: 'owner',
-    description: 'Accounts created through `/auth/register` are always owners in v1.',
+    description: 'Per-restaurant role from active membership.',
   })
-  role!: UserRole;
+  role?: UserRole;
+
+  @ApiPropertyOptional({
+    description: 'Active restaurant from membership, if any.',
+    example: {
+      id: 'r_1',
+      name: "Alex's Restaurant",
+      slug: 'alex-restaurant',
+      timezone: 'UTC',
+      currency: 'USD',
+      createdAt: '2026-01-15T09:24:11.000Z',
+      updatedAt: '2026-01-15T09:24:11.000Z',
+    },
+  })
+  restaurant?: Restaurant;
 
   @ApiProperty({ format: 'date-time', example: '2026-01-15T09:24:11.000Z' })
   createdAt!: string;

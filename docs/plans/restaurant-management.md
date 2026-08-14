@@ -243,3 +243,64 @@ endpoints so scoping guards exist before any admin UI calls them.
   - Types added to `@altora/types`: `Restaurant`, `RestaurantMember`, `RestaurantSettings`, `UpdateRestaurantRequest`, `AuthSession`.
 
 Next: Phase 3 — Restaurants module, guards, decorators, and endpoints.
+
+### Phase 3 — Implementation plan (detailed)
+
+Split the work into small deliverables with clear exit criteria and tests:
+
+1. RestaurantsModule scaffold
+   - Create module, controller, service, and Prisma repository for `restaurant` and `restaurant_members` operations.
+   - Endpoints: GET /restaurants/current, PATCH /restaurants/current, GET /restaurants/current/members, DELETE /restaurants/current/members/:userId.
+2. Guards & decorators
+   - Implement `RestaurantMemberGuard` to load membership and attach `restaurant` and `membership` to request.
+   - Implement `@CurrentRestaurant()` and `@CurrentMembership()` param decorators and ensure `@Roles()` checks membership role.
+3. Auth integration
+   - Update GET /auth/me to include active restaurant and per-restaurant role.
+   - Ensure login returns meaningful 403 if user has no membership.
+4. Tests & docs
+   - Unit tests for guard, decorators, and membership service.
+   - E2E flow: register → restaurant exists → PATCH settings → invite (Phase 5) later.
+   - Add docs/api/restaurants.md and update ADR if needed.
+
+Acceptance criteria: all endpoints return correct status by role, guards enforce membership, tests pass locally, and API docs added.
+
+### Phase 4 — Implementation plan (detailed)
+
+1. Extend auth context
+   - Consume `restaurant` and `role` from `GET /auth/me`.
+   - Expose the active restaurant and membership role through the auth context.
+
+2. Dashboard
+   - Replace the placeholder dashboard content.
+   - Show restaurant name, slug, and current role.
+   - Add navigation to restaurant settings.
+
+3. Restaurant settings
+   - Create `/settings` page.
+   - Add form fields for name, timezone, and currency.
+   - Update settings through `PATCH /api/restaurants/current`.
+   - Make settings editing owner-only.
+
+4. Members
+   - Create `/settings/members`.
+   - Display restaurant members and their roles.
+   - Allow owner and manager to view the member list.
+   - Defer invitations and member removal UI details to Phase 5 where appropriate.
+
+5. Loading and error states
+   - Follow existing patterns from `login-page.tsx`.
+   - Handle loading, validation, and API errors consistently.
+
+6. Tests
+   - Add/extend admin UI tests where the project currently has frontend test coverage.
+   - Verify owner can view and edit restaurant settings.
+   - Verify non-owner users cannot edit restaurant settings.
+
+Acceptance criteria:
+
+- Owner can register in the browser and see their restaurant on the dashboard.
+- Dashboard displays restaurant name, slug, and role.
+- Owner can edit restaurant name, timezone, and currency.
+- Changes persist after page refresh.
+- Non-owner users cannot edit restaurant settings.
+- Existing API and e2e tests remain green.
