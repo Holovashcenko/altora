@@ -21,5 +21,7 @@ Layout:
 ## Plans
 
 - [Authentication](plans/authentication.md) — complete
-- [Restaurant management](plans/restaurant-management.md) — next roadmap step; tenancy,
-  membership, settings, invites
+- [Restaurant management](plans/restaurant-management.md) — API tenancy + RBAC mostly
+  done; admin settings UI and invites still open
+- [AI Restaurant Analytics Assistant](plans/ai-restaurant-analytics-assistant.md) —
+  planned; LLM tool-calling over real Postgres analytics with tenant isolation

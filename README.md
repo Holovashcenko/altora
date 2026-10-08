@@ -52,6 +52,15 @@ Instead of juggling multiple tools for menus, orders, kitchen management, and st
 - Popular dishes
 - Restaurant performance
 
+### 🤖 AI Analytics Assistant
+
+- Natural-language questions over real restaurant data
+- Controlled backend tools (revenue, comparisons, top products, busy hours, tables)
+- Streaming answers with conversation history
+- Multi-tenant isolation — the model never chooses `restaurantId` or runs SQL
+
+See the [implementation plan](docs/plans/ai-restaurant-analytics-assistant.md).
+
 ---
 
 ## 🏗 Architecture
@@ -174,9 +183,18 @@ infrastructure/
   nginx/              Reverse-proxy configuration
   scripts/            Operational scripts
 
-docs/                 Architecture notes and ADRs
+docs/                 Architecture notes, ADRs, and feature plans
 .github/              CI workflows
 ```
+
+---
+
+## 📚 Documentation
+
+- [docs/](docs/README.md) — ADRs, API notes, and implementation plans
+- [Authentication ADR](docs/decisions/0001-authentication.md)
+- [Restaurant management plan](docs/plans/restaurant-management.md)
+- [AI Restaurant Analytics Assistant plan](docs/plans/ai-restaurant-analytics-assistant.md)
 
 ---
 
@@ -184,7 +202,7 @@ docs/                 Architecture notes and ADRs
 
 - [x] Project initialization
 - [x] Authentication
-- [ ] Restaurant management
+- [x] Restaurant management (API tenancy + RBAC; admin settings UI / invites still open)
 - [ ] Hall builder
 - [ ] Table management
 - [ ] Menu management
@@ -194,6 +212,7 @@ docs/                 Architecture notes and ADRs
 - [ ] Real-time updates
 - [ ] Kafka integration
 - [ ] Analytics
+- [ ] AI Restaurant Analytics Assistant ([plan](docs/plans/ai-restaurant-analytics-assistant.md))
 - [ ] CI/CD
 - [ ] Production deployment
 

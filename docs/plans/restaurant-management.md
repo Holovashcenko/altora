@@ -1,33 +1,37 @@
 # Restaurant Management — Implementation Plan
 
-Next roadmap item after **Authentication** ([README](../../README.md#-roadmap)).
+Roadmap item after **Authentication** ([README](../../README.md#-roadmap)).
 
 Builds on [ADR 0001](../decisions/0001-authentication.md), which deferred tenant
 scoping, per-restaurant roles, and `@Roles()` authorization to this milestone.
+
+**Status:** API tenancy + RBAC is largely in place (`RestaurantsModule`, membership
+guards, register creates restaurant + owner). Admin settings UI and invites remain
+open. Downstream features that depend on this tenant layer include the
+[AI Restaurant Analytics Assistant](./ai-restaurant-analytics-assistant.md).
 
 ## Current State
 
 | Layer            | Status                                                                       |
 | ---------------- | ---------------------------------------------------------------------------- |
-| API              | `AuthModule` only — register hardcodes `owner`, no `Restaurant` entity yet   |
-| Admin            | Protected dashboard shell; placeholder copy awaiting real restaurant UI      |
-| Database / ORM   | `users` table with a global `UserRole` enum — no tenant or membership tables |
-| `packages/types` | Auth contracts only — no restaurant or membership types                      |
-| Tests            | Auth unit + e2e coverage — no tenancy or scoping assertions                  |
+| API              | `RestaurantsModule` + guards; register creates restaurant + owner membership |
+| Admin            | Protected dashboard shell; settings / members UI still pending               |
+| Database / ORM   | `restaurants` + `restaurant_members`; role lives on membership               |
+| `packages/types` | Auth + restaurant / membership contracts                                     |
+| Tests            | Auth + restaurants unit and e2e coverage                                      |
 
-What auth already promises in code comments but does not implement yet:
+Still open in this milestone:
 
-- Register creates an **owner** who **owns their own restaurant** (no restaurant row
-  is created today).
-- **Manager** and **staff** accounts will arrive via **invites** in this milestone.
-- **Restaurant-scoped guards** must ship with the first restaurant endpoint — not
-  after it (see ADR 0001, decision 3).
+- **Manager** and **staff** accounts via **invites**.
+- Admin UI for restaurant settings and member management.
 
 Deliberately **out of scope** for this milestone (later roadmap items):
 
 - Dining halls (**Hall builder**)
 - Tables and layout (**Table management**)
 - Menus, QR ordering, kitchen/waiter dashboards
+- AI analytics assistant (separate plan; may introduce a lean order/product schema
+  ahead of full QR ordering)
 
 ---
 
