@@ -1,7 +1,9 @@
 # Authentication — Implementation Plan
 
 **Status: complete** (2026-08-11). Delivered across all five phases below; the next
-roadmap item is **Restaurant management** ([README](../../README.md#-roadmap)).
+roadmap continues with **Restaurant management** and the
+[AI Restaurant Analytics Assistant](./ai-restaurant-analytics-assistant.md)
+([README](../../README.md#-roadmap)).
 
 Reference material for what shipped:
 [ADR 0001](../decisions/0001-authentication.md) for the decisions,

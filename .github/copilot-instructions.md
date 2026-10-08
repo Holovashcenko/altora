@@ -153,7 +153,9 @@ Detailed docs are in `docs/`:
 
 - **Decisions:** `docs/decisions/0001-authentication.md` (JWT, role model, tenant scope, stateless logout)
 - **API endpoints:** `docs/api/authentication.md` (register, login, me endpoints with examples)
-- **Plans:** `docs/plans/` (upcoming features roadmap)
+- **Plans:** `docs/plans/` — including restaurant management and
+  [AI Restaurant Analytics Assistant](../docs/plans/ai-restaurant-analytics-assistant.md)
+  (LLM tool-calling over Postgres; never arbitrary SQL; tenant from auth, not the model)
 
 Swagger UI served at `http://localhost:4000/api/docs` (enabled everywhere except production by default).
 
